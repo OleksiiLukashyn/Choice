@@ -1,28 +1,30 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Choice.Data;
 using Choice.Models;
 
 namespace Choice.Controllers
 {
-    public class StudentsController : Controller
+    public class DisciplinesController : Controller
     {
         private readonly AppDbContext _context;
 
-        public StudentsController(AppDbContext context)
+        public DisciplinesController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Students
+        // GET: Disciplines
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Students.ToListAsync());
+            var appDbContext = _context.Disciplines.Include(d => d.Teacher);
+            return View(await appDbContext.ToListAsync());
         }
 
-        // GET: Students/Details/5
+        // GET: Disciplines/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -30,39 +32,42 @@ namespace Choice.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Students
+            var discipline = await _context.Disciplines
+                .Include(d => d.Teacher)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (student == null)
+            if (discipline == null)
             {
                 return NotFound();
             }
 
-            return View(student);
+            return View(discipline);
         }
 
-        // GET: Students/Create
+        // GET: Disciplines/Create
         public IActionResult Create()
         {
+            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Id");
             return View();
         }
 
-        // POST: Students/Create
+        // POST: Disciplines/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Group")] Student student)
+        public async Task<IActionResult> Create([Bind("Id,Title,Annotation,TeacherId")] Discipline discipline)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(student);
+                _context.Add(discipline);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(student);
+            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Id", discipline.TeacherId);
+            return View(discipline);
         }
 
-        // GET: Students/Edit/5
+        // GET: Disciplines/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -70,22 +75,23 @@ namespace Choice.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Students.FindAsync(id);
-            if (student == null)
+            var discipline = await _context.Disciplines.FindAsync(id);
+            if (discipline == null)
             {
                 return NotFound();
             }
-            return View(student);
+            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Id", discipline.TeacherId);
+            return View(discipline);
         }
 
-        // POST: Students/Edit/5
+        // POST: Disciplines/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Group")] Student student)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Annotation,TeacherId")] Discipline discipline)
         {
-            if (id != student.Id)
+            if (id != discipline.Id)
             {
                 return NotFound();
             }
@@ -94,12 +100,12 @@ namespace Choice.Controllers
             {
                 try
                 {
-                    _context.Update(student);
+                    _context.Update(discipline);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StudentExists(student.Id))
+                    if (!DisciplineExists(discipline.Id))
                     {
                         return NotFound();
                     }
@@ -110,10 +116,11 @@ namespace Choice.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(student);
+            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Id", discipline.TeacherId);
+            return View(discipline);
         }
 
-        // GET: Students/Delete/5
+        // GET: Disciplines/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -121,30 +128,31 @@ namespace Choice.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Students
+            var discipline = await _context.Disciplines
+                .Include(d => d.Teacher)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (student == null)
+            if (discipline == null)
             {
                 return NotFound();
             }
 
-            return View(student);
+            return View(discipline);
         }
 
-        // POST: Students/Delete/5
+        // POST: Disciplines/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var student = await _context.Students.FindAsync(id);
-            _context.Students.Remove(student);
+            var discipline = await _context.Disciplines.FindAsync(id);
+            _context.Disciplines.Remove(discipline);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StudentExists(int id)
+        private bool DisciplineExists(int id)
         {
-            return _context.Students.Any(e => e.Id == id);
+            return _context.Disciplines.Any(e => e.Id == id);
         }
     }
 }
