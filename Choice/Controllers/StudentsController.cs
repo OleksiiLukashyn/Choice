@@ -53,7 +53,7 @@ namespace Choice.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Group")] StudentViewModel studentModel)
+        public async Task<IActionResult> Create([Bind("Id,Name,Group")] Student studentModel)
         {
             if (ModelState.IsValid)
             {
@@ -117,13 +117,13 @@ namespace Choice.Controllers
                     _context.RemoveRange(_context.StudDiscs.Where(sd => sd.StudentId == student.Id));
                     _context.StudDiscs.AddRange(addedStudDisc);
                     await _context.SaveChangesAsync();
-    }
+                }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!StudentExists(student.Id))
                     {
                         return NotFound();
-}
+                    }
                     else
                     {
                         throw;
@@ -136,36 +136,43 @@ namespace Choice.Controllers
 
         // GET: Students/Delete/5
         public async Task<IActionResult> Delete(int? id)
-{
-    if (id == null)
-    {
-        return NotFound();
-    }
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-    var student = await _context.Students
-        .FirstOrDefaultAsync(m => m.Id == id);
-    if (student == null)
-    {
-        return NotFound();
-    }
+            var student = await _context.Students
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (student == null)
+            {
+                return NotFound();
+            }
 
-    return View(student);
-}
+            return View(student);
+        }
 
-// POST: Students/Delete/5
-[HttpPost, ActionName("Delete")]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> DeleteConfirmed(int id)
-{
-    var student = await _context.Students.FindAsync(id);
-    _context.Students.Remove(student);
-    await _context.SaveChangesAsync();
-    return RedirectToAction(nameof(Index));
-}
+        // POST: Students/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var student = await _context.Students.FindAsync(id);
+            _context.Students.Remove(student);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
 
-private bool StudentExists(int id)
-{
-    return _context.Students.Any(e => e.Id == id);
-}
+        private bool StudentExists(int id)
+        {
+            return _context.Students.Any(e => e.Id == id);
+        }
+
+        public JsonResult ValidateName(string name)
+        {
+            if (_context.Students.Any(s => s.Name == name))
+                return Json("Student's name is not unique.");
+            return Json(true);
+        }
     }
 }

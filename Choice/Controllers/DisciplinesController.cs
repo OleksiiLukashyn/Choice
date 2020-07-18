@@ -63,7 +63,7 @@ namespace Choice.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Id", discipline.TeacherId);
+            ViewData["Teachers"] = new SelectList(_context.Teachers, "Id", "Name");
             return View(discipline);
         }
 
@@ -116,7 +116,7 @@ namespace Choice.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Id", discipline.TeacherId);
+            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Name", discipline.TeacherId);
             return View(discipline);
         }
 

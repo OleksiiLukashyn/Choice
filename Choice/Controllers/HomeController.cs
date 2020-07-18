@@ -1,27 +1,111 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Choice.Models;
+using Choice.Data;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Choice.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly AppDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(AppDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+
+        // GET: Students
+        public async Task<IActionResult> Index()
         {
-            return View();
+            return View(await _context.Students.ToListAsync());
         }
 
         public IActionResult Privacy()
         {
             return View();
+        }
+
+
+        // GET: Students/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var student = await _context.Students.FindAsync(id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+            var disciplines = _context.Disciplines;
+            var studentModel = new StudentViewModel();
+            studentModel.Student = student;
+            studentModel.Disciplines = disciplines.Select(discipline => new DisciplineViewItem()
+            {
+                Discipline = discipline,
+                IsStudied = discipline.StudDiscs.Any(sd => sd.StudentId == student.Id)
+            }
+            ).ToList();
+
+            return View(studentModel);
+        }
+
+        // POST: Students/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Group")] Student student, List<DisciplineViewItem> disciplines)
+        {
+            if (id != student.Id)
+            {
+                return NotFound();
+            }
+
+            var addedStudDisc = disciplines.Where(discipline => discipline.IsStudied)
+                .Select(x => new StudDisc()
+                {
+                    StudentId = student.Id,
+                    DisciplineId = x.Discipline.Id,
+                    
+                });
+
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(student);
+                    _context.RemoveRange(_context.StudDiscs.Where(sd => sd.StudentId == student.Id));
+                    _context.StudDiscs.AddRange(addedStudDisc);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StudentExists(student.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(student);
+        }
+
+        private bool StudentExists(int id)
+        {
+            return _context.Students.Any(e => e.Id == id);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

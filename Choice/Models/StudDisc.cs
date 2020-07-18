@@ -1,4 +1,6 @@
-﻿namespace Choice.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Choice.Models
 {
     public class StudDisc
     {
