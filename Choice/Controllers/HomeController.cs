@@ -49,7 +49,8 @@ namespace Choice.Controllers
             studentModel.Student = student;
             studentModel.Disciplines = disciplines.Select(discipline => new DisciplineViewItem()
             {
-                Discipline = discipline,
+                DisciplineId = discipline.Id,
+                DisciplineName = discipline.Title,
                 IsStudied = discipline.StudDiscs.Any(sd => sd.StudentId == student.Id)
             }
             ).ToList();
@@ -73,7 +74,7 @@ namespace Choice.Controllers
                 .Select(x => new StudDisc()
                 {
                     StudentId = student.Id,
-                    DisciplineId = x.Discipline.Id,
+                    DisciplineId = x.DisciplineId,
                     
                 });
 

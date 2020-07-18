@@ -10,7 +10,7 @@ namespace Choice.Models
         [Required(ErrorMessage = "{0} is required.")]
         [StringLength(40, MinimumLength = 5, ErrorMessage = "Incorrect length of {0}.")]
         [RegularExpression(@"[A-Z][a-z]+[ ][A-Z]+[a-z]+")]
-        [Remote("ValidateName", "Students")]
+        [Remote("ValidateStudentName", "Students")]
         public string Name { set; get; }
         [Required(ErrorMessage = "{0} is required.")]
         public string Group { set; get; }

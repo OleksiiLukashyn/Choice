@@ -30,8 +30,8 @@
 
                         <div class="form-check">
                             <input class="form-check-input ml-auto" type="checkbox" asp-for="@Model.Disciplines[i].IsStudied" />
-                            <label class="form-check-label ml-4" asp-for="@Model.Disciplines[i].IsStudied">@Model.Disciplines[i].Discipline.Title</label>
-                            <input type="hidden" asp-for="@Model.Disciplines[i].Discipline.Id" />
+                            <label class="form-check-label ml-4" asp-for="@Model.Disciplines[i].IsStudied">@Model.Disciplines[i].DisciplineName</label>
+                            <input type="hidden" asp-for="@Model.Disciplines[i].DisciplineId" />
                         </div>
                     }
             </div>
