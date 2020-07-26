@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Choice.Models
+﻿namespace Choice.Models
 {
     public class StudentViewModel
     {

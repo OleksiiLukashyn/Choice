@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-
-namespace Choice.Migrations
+﻿namespace Choice.Migrations
 {
     public partial class newModels : Migration
     {

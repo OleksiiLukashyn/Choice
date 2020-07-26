@@ -148,5 +148,12 @@ namespace ChoiceA.Controllers
         {
             return _context.Teachers.Any(e => e.Id == id);
         }
+
+        public JsonResult ValidateName(string name)
+        {
+            if (_context.Teachers.Any(s => s.Name == name))
+                return Json("Teacher's name is not unique.");
+            return Json(true);
+        }
     }
 }

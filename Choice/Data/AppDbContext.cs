@@ -1,5 +1,4 @@
 ﻿using Choice.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Choice.Data
 {

@@ -1,11 +1,5 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Choice.Models;
+﻿using Choice.Models;
 using Choice.Data;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace Choice.Controllers
 {

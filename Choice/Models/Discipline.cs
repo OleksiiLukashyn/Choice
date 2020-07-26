@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
-namespace Choice.Models
+﻿namespace Choice.Models
 {
     public class Discipline
     {

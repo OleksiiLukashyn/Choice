@@ -1,5 +1,3 @@
-using System;
-
 namespace ChoiceA.Models
 {
     public class ErrorViewModel

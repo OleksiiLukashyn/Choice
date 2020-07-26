@@ -1,8 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Choice.Data;
+﻿using Choice.Data;
 using Choice.Models;
 
 namespace Choice.Controllers
