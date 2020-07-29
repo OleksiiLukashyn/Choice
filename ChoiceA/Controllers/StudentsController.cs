@@ -5,18 +5,24 @@ using Microsoft.EntityFrameworkCore;
 using ChoiceA.Data;
 using ChoiceA.Models;
 using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace ChoiceA.Controllers
 {
     [Authorize]
     public class StudentsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        public const string DefaultPassword = "123456";
+        public const string StudentIdPropertyName = "studentId";
 
-        public StudentsController(ApplicationDbContext context)
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public StudentsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
 
@@ -55,15 +61,34 @@ namespace ChoiceA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Group")] Student studentModel)
+        public async Task<IActionResult> Create([Bind("Name,Group")] Student student)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(studentModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // register new user
+                var user = new IdentityUser { 
+                    UserName = student.Name, 
+                    Email = $"{student.Name}@gmail.com" 
+                };
+                var result = await _userManager.CreateAsync(user, DefaultPassword);
+
+                if (result.Succeeded)
+                {
+                    // add new student
+                    _context.Add(student);
+                    await _context.SaveChangesAsync();
+                    await _userManager.AddClaimAsync(
+                        user,
+                        new Claim(StudentIdPropertyName, student.Id.ToString())
+                        );
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError("Name", result.Errors.First().Description);
+                }
             }
-            return View(studentModel);
+            return View(student);
         }
 
         // GET: Students/Edit/5
@@ -79,64 +104,9 @@ namespace ChoiceA.Controllers
             {
                 return NotFound();
             }
-            var disciplines = _context.Disciplines;
-            var studentModel = new StudentViewModel();
-            studentModel.Student = student;
-            studentModel.Disciplines = disciplines.Select(discipline => new DisciplineViewItem()
-            {
-                DisciplineId = discipline.Id,
-                DisciplineName = discipline.Title,
-                IsStudied = discipline.StudDiscs.Any(sd => sd.StudentId == student.Id)
-            }
-            ).ToList();
-
-            return View(studentModel);
-        }
-
-        // POST: Students/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Group")] Student student, List<DisciplineViewItem> disciplines)
-        {
-            if (id != student.Id)
-            {
-                return NotFound();
-            }
-
-            var addedStudDisc = disciplines.Where(discipline => discipline.IsStudied)
-                .Select(x => new StudDisc()
-                {
-                    StudentId = student.Id,
-                    DisciplineId = x.DisciplineId
-                });
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(student);
-                    _context.RemoveRange(_context.StudDiscs.Where(sd => sd.StudentId == student.Id));
-                    _context.StudDiscs.AddRange(addedStudDisc);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StudentExists(student.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
             return View(student);
         }
-
+        
         // GET: Students/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

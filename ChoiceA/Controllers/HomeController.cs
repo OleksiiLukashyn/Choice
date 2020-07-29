@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using ChoiceA.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using ChoiceA.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 namespace ChoiceA.Controllers
 {
@@ -23,9 +23,12 @@ namespace ChoiceA.Controllers
 
 
         // GET: Students
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Students.ToListAsync());
+            var claim = User.Claims.FirstOrDefault(c => c.Type == StudentsController.StudentIdPropertyName);
+            if (claim == null)
+                return View();
+            return RedirectToAction("Edit", new { id = Convert.ToInt32(claim.Value) });
         }
 
         public IActionResult Privacy()
