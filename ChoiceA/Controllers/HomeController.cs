@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using ChoiceA.ActionResults;
+using ChoiceA.Attributes;
 
 namespace ChoiceA.Controllers
 {
@@ -31,9 +33,11 @@ namespace ChoiceA.Controllers
             return RedirectToAction("Edit", new { id = Convert.ToInt32(claim.Value) });
         }
 
+        [RedBeauty]
+        [Route("test")]
         public IActionResult Privacy()
         {
-            return View();
+            return new BeautyResult { InnerHtml = "<h1>Hello. Its RedBeautyAttribute test</hi>" };
         }
 
 
