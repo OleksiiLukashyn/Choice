@@ -13,9 +13,6 @@ namespace ChoiceA.Controllers
     [Authorize]
     public class StudentsController : Controller
     {
-        public const string DefaultPassword = "123456";
-        public const string StudentIdPropertyName = "studentId";
-
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
 
@@ -70,7 +67,7 @@ namespace ChoiceA.Controllers
                     UserName = student.Name, 
                     Email = $"{student.Name}@gmail.com" 
                 };
-                var result = await _userManager.CreateAsync(user, DefaultPassword);
+                var result = await _userManager.CreateAsync(user, Startup.DefaultPassword);
 
                 if (result.Succeeded)
                 {
@@ -79,7 +76,7 @@ namespace ChoiceA.Controllers
                     await _context.SaveChangesAsync();
                     await _userManager.AddClaimAsync(
                         user,
-                        new Claim(StudentIdPropertyName, student.Id.ToString())
+                        new Claim(Startup.StudentIdPropertyName, student.Id.ToString())
                         );
                     return RedirectToAction(nameof(Index));
                 }

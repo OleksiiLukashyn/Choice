@@ -25,7 +25,7 @@ namespace ChoiceA.Controllers
         // GET: Students
         public IActionResult Index()
         {
-            var claim = User.Claims.FirstOrDefault(c => c.Type == StudentsController.StudentIdPropertyName);
+            var claim = User.Claims.FirstOrDefault(c => c.Type == Startup.StudentIdPropertyName);
             if (claim == null)
                 return View();
             return RedirectToAction("Edit", new { id = Convert.ToInt32(claim.Value) });

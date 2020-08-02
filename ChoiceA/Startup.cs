@@ -16,6 +16,9 @@ namespace ChoiceA
             Configuration = configuration;
         }
 
+        public const string DefaultPassword = "123456";
+        public const string StudentIdPropertyName = "studentId";
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
