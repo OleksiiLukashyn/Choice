@@ -13,7 +13,7 @@ using ChoiceA.Attributes;
 
 namespace ChoiceA.Controllers
 {
-    [Authorize]
+    [ForStudent]
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
