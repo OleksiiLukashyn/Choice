@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ChoiceA.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "admin")]
     public class DisciplinesController : Controller
     {
         private readonly ApplicationDbContext _context;
