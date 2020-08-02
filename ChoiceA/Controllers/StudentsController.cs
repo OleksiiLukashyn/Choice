@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ChoiceA.Data;
 using ChoiceA.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using ChoiceA.Attributes;
 
 namespace ChoiceA.Controllers
 {
-    [Authorize(Roles = "admin")]
+    [ForAdmin]
     public class StudentsController : Controller
     {
         private readonly ApplicationDbContext _context;
