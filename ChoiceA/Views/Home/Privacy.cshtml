@@ -1,6 +1,5 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
-}
-<h1>@ViewData["Title"]</h1>
+﻿@inject ChoiceA.Services.ITimeService service;
 
-<p>Use this page to detail your site's privacy policy.</p>
+<h3>@ViewData["Time"] - in action</h3>
+
+<h3>@service.Time - in view</h3>

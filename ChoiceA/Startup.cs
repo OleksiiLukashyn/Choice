@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
+using ChoiceA.Services;
 
 namespace ChoiceA
 {
@@ -61,6 +62,8 @@ namespace ChoiceA
                         context => !context.User.Claims.Any(c => c.Type == "StudentId")
                     ));
             });
+
+            services.AddTime();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

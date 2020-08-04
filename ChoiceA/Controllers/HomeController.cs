@@ -10,17 +10,21 @@ using System.Collections.Generic;
 using System;
 using ChoiceA.ActionResults;
 using ChoiceA.Attributes;
+using ChoiceA.Services;
 
 namespace ChoiceA.Controllers
 {
-    [ForStudent]
+    //[ForStudent]
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
+        readonly ITimeService _service;
 
-        public HomeController(ApplicationDbContext context)
+
+        public HomeController(ApplicationDbContext context, ITimeService service)
         {
             _context = context;
+            _service = service;
         }
 
 
@@ -33,11 +37,11 @@ namespace ChoiceA.Controllers
             return RedirectToAction("Edit", new { id = Convert.ToInt32(claim.Value) });
         }
 
-        [RedBeauty]
         [Route("test")]
         public IActionResult Privacy()
         {
-            return new BeautyResult { InnerHtml = "<h1>Hello. Its RedBeautyAttribute test</hi>" };
+            ViewData["Time"] = _service.Time;
+            return View();
         }
 
 
