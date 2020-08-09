@@ -30,17 +30,6 @@ namespace ChoiceA
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            //services.AddDefaultIdentity<IdentityUser>(options =>
-            //{
-            //    options.Password.RequireDigit = false;
-            //    options.Password.RequireLowercase = false;
-            //    options.Password.RequireUppercase = false;
-            //    options.Password.RequireNonAlphanumeric = false;
-            //    options.Password.RequiredLength = 6;
-            //}
-            //    )
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
-
             services.AddIdentity<IdentityUser, IdentityRole>(options => {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
@@ -62,8 +51,6 @@ namespace ChoiceA
                         context => !context.User.Claims.Any(c => c.Type == "StudentId")
                     ));
             });
-
-            services.AddTime();
             services.AddGroupService();
         }
 
