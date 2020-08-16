@@ -77,6 +77,7 @@ namespace ChoiceA
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseTopSecret();
             app.UseImageCache("img");
 
             app.UseEndpoints(endpoints =>
