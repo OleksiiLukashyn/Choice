@@ -8,11 +8,25 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
 using ChoiceA.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace ChoiceA
 {
     public class Startup
     {
+        static RequestDelegate Abc(RequestDelegate next)
+        {
+            return async context =>
+            {
+                // logic
+                await context.Response.WriteAsync("ABC--");
+                // call next(content)
+                await next?.Invoke(context);
+                // more logic
+                await context.Response.WriteAsync("--XYZ");
+            };
+        }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -30,7 +44,8 @@ namespace ChoiceA
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options => {
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
@@ -75,6 +90,8 @@ namespace ChoiceA
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.Use(Abc);
 
             app.UseEndpoints(endpoints =>
             {

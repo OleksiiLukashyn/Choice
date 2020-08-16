@@ -7,4 +7,3 @@ namespace ChoiceA.Models
         public List<string> Groups { get; set; }
     }
 }
-}

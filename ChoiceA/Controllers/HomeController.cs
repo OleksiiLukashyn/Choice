@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using Microsoft.AspNetCore.Http;
 
 namespace ChoiceA.Controllers
 {
@@ -23,12 +24,14 @@ namespace ChoiceA.Controllers
 
 
         // GET: Students
-        public IActionResult Index()
+        public async Task Index()
         {
-            var claim = User.Claims.FirstOrDefault(c => c.Type == Startup.StudentIdPropertyName);
-            if (claim == null)
-                return View();
-            return RedirectToAction("Edit", new { id = Convert.ToInt32(claim.Value) });
+            await Response.WriteAsync("Index");
+
+            //var claim = User.Claims.FirstOrDefault(c => c.Type == Startup.StudentIdPropertyName);
+            //if (claim == null)
+            //    return View();
+            //return RedirectToAction("Edit", new { id = Convert.ToInt32(claim.Value) });
         }
 
 
