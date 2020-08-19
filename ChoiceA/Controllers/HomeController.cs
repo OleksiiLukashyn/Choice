@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using Microsoft.Extensions.Options;
 
 namespace ChoiceA.Controllers
 {
@@ -14,17 +15,20 @@ namespace ChoiceA.Controllers
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly MyData _myData;
 
-
-        public HomeController(ApplicationDbContext context)
+        public HomeController(ApplicationDbContext context, IOptions<MyData> opts)
         {
             _context = context;
+            _myData = opts.Value;
         }
 
 
         // GET: Students
         public IActionResult Index()
         {
+            return Content(_myData.MyDict["key1"]);
+
             var claim = User.Claims.FirstOrDefault(c => c.Type == Startup.StudentIdPropertyName);
             if (claim == null)
                 return View();

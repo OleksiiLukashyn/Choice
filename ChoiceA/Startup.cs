@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using ChoiceA.Services;
 using ChoiceA.Middleware;
+using ChoiceA.Models;
 
 namespace ChoiceA
 {
@@ -53,6 +54,7 @@ namespace ChoiceA
                     ));
             });
             services.AddGroupService();
+            services.Configure<MyData>(Configuration.GetSection("MySection"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
