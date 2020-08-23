@@ -15,20 +15,16 @@ namespace ChoiceA.Controllers
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly MyData _myData;
 
-        public HomeController(ApplicationDbContext context, IOptions<MyData> opts)
+        public HomeController(ApplicationDbContext context)
         {
             _context = context;
-            _myData = opts.Value;
         }
 
 
         // GET: Students
         public IActionResult Index()
         {
-            return Content(_myData.MyDict["key1"]);
-
             var claim = User.Claims.FirstOrDefault(c => c.Type == Startup.StudentIdPropertyName);
             if (claim == null)
                 return View();
@@ -41,8 +37,8 @@ namespace ChoiceA.Controllers
             return View();
         }
 
-
         // GET: Students/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -60,8 +56,8 @@ namespace ChoiceA.Controllers
             studentModel.Student = student;
             studentModel.Disciplines = disciplines.Select(discipline => new DisciplineViewItem()
             {
-                DisciplineId = discipline.Id,
-                DisciplineName = discipline.Title,
+                Id = discipline.Id,
+                Name = discipline.Title,
                 IsStudied = discipline.StudDiscs.Any(sd => sd.StudentId == student.Id)
             }
             ).ToList();
@@ -85,7 +81,7 @@ namespace ChoiceA.Controllers
                 .Select(x => new StudDisc()
                 {
                     StudentId = student.Id,
-                    DisciplineId = x.DisciplineId,
+                    DisciplineId = x.Id,
 
                 });
 
@@ -113,6 +109,45 @@ namespace ChoiceA.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(student);
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditAjax([FromBody] StudentViewModel studentViewModel)
+        {
+            var addedStudDisc = studentViewModel.Disciplines.Where(discipline => discipline.IsStudied)
+                .Select(x => new StudDisc()
+                {
+                    StudentId = studentViewModel.Student.Id,
+                    DisciplineId = x.Id,
+
+                });
+
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.RemoveRange(_context.StudDiscs.Where(sd => sd.StudentId == studentViewModel.Student.Id));
+                    _context.StudDiscs.AddRange(addedStudDisc);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StudentExists(studentViewModel.Student.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return new JsonResult(new { name = studentViewModel.Student.Name });
+            }
+
+            var errMes = ModelState["text"]?.Errors[0]?.ErrorMessage ?? "Unknown error";
+            return BadRequest(errMes);
         }
 
         private bool StudentExists(int id)

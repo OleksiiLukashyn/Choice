@@ -2,8 +2,8 @@
 {
     public class DisciplineViewItem
     {
-        public int DisciplineId { get; set; }
-        public string DisciplineName { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public bool IsStudied { get; set; }
     }
 }

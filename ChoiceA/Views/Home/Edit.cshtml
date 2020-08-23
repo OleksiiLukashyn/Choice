@@ -4,36 +4,36 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit disciplines</h1>
+<h1>Choose the disciplines you want to study</h1>
 
 <h4>Student @Model.Student.Name</h4>
 <hr />
+<div id="top"> </div>
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <div id="student">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Student.Id" />
             <input type="hidden" asp-for="Student.Name" />
             <input type="hidden" asp-for="Student.Group" />
-            <div class="form-group">
+        </div>
+        @Html.AntiForgeryToken()
+        <div class="form-group">
 
-                @for (var i = 0; i < Model.Disciplines.Count; i++)
-                {
-                    <div class="form-check">
-                        <input class="form-check-input ml-auto" type="checkbox" asp-for="@Model.Disciplines[i].IsStudied" />
-                        <label class="form-check-label ml-4" asp-for="@Model.Disciplines[i].IsStudied">@Model.Disciplines[i].DisciplineName</label>
-                        <input type="hidden" asp-for="@Model.Disciplines[i].DisciplineId" />
-                    </div>
-                }
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+            @for (var i = 0; i < Model.Disciplines.Count; i++)
+            {
+                <div class="form-check discipline">
+                    <input class="form-check-input ml-auto" type="checkbox" asp-for="@Model.Disciplines[i].IsStudied" />
+                    <label class="form-check-label ml-4" asp-for="@Model.Disciplines[i].IsStudied">@Model.Disciplines[i].Name</label>
+                    <input type="hidden" asp-for="@Model.Disciplines[i].Id" />
+                </div>
+            }
+        </div>
+        <input type="button" class="btn btn-secondary" value="Save changes" onclick="send()" />
+
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+@section Scripts {
+    <script src="~/js/discipline.service.js" type="text/javascript" charset="utf-8"></script>
+}
